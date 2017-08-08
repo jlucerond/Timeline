@@ -23,4 +23,6 @@ class PostController {
         let newComment = Comment(text: text, post: post)
         post.comments.append(newComment)
     }
+    
+    
 }
