@@ -17,6 +17,7 @@ class PostController {
         let imageData = UIImagePNGRepresentation(image)
         let newPost = Post(photoData: imageData)
         addCommentTo(post: newPost, with: caption)
+        posts.append(newPost)
     }
     
     func addCommentTo(post: Post, with text: String) {

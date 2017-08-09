@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Post {
+class Post: SearchableRecord {
     let photoData: Data?
     let timestamp: Date?
     var comments: [Comment]
@@ -21,5 +21,13 @@ class Post {
         self.photoData = photoData
         self.timestamp = timestamp
         self.comments = comments
+    }
+    
+    func matches(searchTerm: String) -> Bool {
+        for comment in comments {
+            if comment.matches(searchTerm: searchTerm) { return true }
+        }
+        
+        return false
     }
 }
