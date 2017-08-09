@@ -10,6 +10,15 @@ import UIKit
 
 class PostListTableViewController: UITableViewController {
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUpSearchController()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
     
 }
 
@@ -34,10 +43,41 @@ extension PostListTableViewController {
 extension PostListTableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ToDetailController" {
-            guard let indexPath = tableView.indexPathForSelectedRow,
+            guard let cellSelected = sender as? UITableViewCell,
+            let indexPath = tableView.indexPath(for: cellSelected),
             let nextVC = segue.destination as? PostDetailTableViewController else { return }
             
             nextVC.post = PostController.shared.posts[indexPath.row]
         }
     }
+}
+
+// MARK: - Create Search Results Table View Controller
+extension PostListTableViewController: UISearchResultsUpdating {
+    func setUpSearchController() {
+        let searchResultsVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SearchResultsTableViewController")
+        
+        let searchController = UISearchController(searchResultsController: searchResultsVC)
+        searchController.searchResultsUpdater = self
+        tableView.tableHeaderView = searchController.searchBar
+        
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        
+        if let resultsViewController = searchController.searchResultsController as? SearchResultsTableViewController,
+            let searchTerm = searchController.searchBar.text?.lowercased() {
+            
+            let posts = PostController.shared.posts
+            
+            let filteredPosts = posts.filter { $0.matches(searchTerm: searchTerm) }.map { $0 as SearchableRecord }
+            resultsViewController.results = filteredPosts
+            resultsViewController.tableView.reloadData()
+        }
+    }
+    
+    /*
+     Implement the UISearchResultsUpdating protocol updateSearchResults(for searchController: UISearchController) function. The function should capture the resultsViewController and the search text from the searchController's searchBar, filter the local posts array for posts that match, assign the filtered results to the resultsViewController's resultsArray, and reload the resultsViewController's tableView.
+     note: Consider the communication that is happening here between two separate view controllers. Be sure that you understand this relationship.
+ */
 }

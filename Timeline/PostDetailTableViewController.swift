@@ -16,6 +16,7 @@ class PostDetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.estimatedRowHeight = 44
+        updateViews()
     }
     
     // MARK: - IBActions
